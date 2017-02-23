@@ -14,33 +14,40 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
 
   if (likelihood == "standard") {
     nll.gev <- function(par) {
-      pmat <- fpar(par, xpar)
-      loc <- pmat$loc
+      pmat  <- fpar(par, xpar)
+      loc   <- pmat$loc
       scale <- pmat$scale
       shape <- pmat$shape
+
       if(any(scale <= 0)) return(1e+20)
+
       gumbel <- (abs(shape) < 1e-06)
+
       y <- (data - loc) / scale
       z <- 1 + shape * y
+
       if(any(z <= 0, na.rm = TRUE)) return(1e+20)
+
       nll <- (1 + 1 / shape) * log(z) + z^(-1 / shape)
       nll[gumbel] <- y[gumbel] + exp(-y[gumbel])
       sum(nll + log(scale), na.rm = TRUE)
     }
   } else if (likelihood == "range") {
     nll.gev <- function(par) {
-      pmat <- fpar(par, xpar)
-      loc <- pmat$loc
+      pmat  <- fpar(par, xpar)
+      loc   <- pmat$loc
       scale <- pmat$scale
       shape <- pmat$shape
+
       if(any(scale <= 0)) return(1e+20)
+
       gumbel <- (abs(shape) < 1e-06)
-      #   sum(nll + log(scale), na.rm = TRUE)
 
       y1 <- (data[ , 1] - loc) / scale
       y2 <- (data[ , 2] - loc) / scale
 
       #nll for data2 == data1:
+      # isRange <- y1 != y2
       y1eq <- y1[y1 == y2]
       z1eq <- 1 + shape * y1eq
       if(any(z1eq <= 0, na.rm = TRUE)) return(1e+20)
