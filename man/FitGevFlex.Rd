@@ -4,16 +4,20 @@
 \alias{FitGevFlex}
 \title{Fit flexible GEV}
 \usage{
-FitGevFlex(data, start, fpar, xpar, std.err = TRUE, ...)
+FitGevFlex(data, start, fpar, xpar, likelihood = "standard", std.err = TRUE,
+  ...)
 }
 \arguments{
-\item{data}{the data}
+\item{data}{the data (in case of likelihood = "range" this should be a
+matrix or data.frame with two columns)}
 
 \item{start}{the start values}
 
 \item{fpar}{the parameter model}
 
 \item{xpar}{the covariates used in fpar}
+
+\item{likelihood}{either standard or range}
 
 \item{std.err}{should standard errors be returned}
 
