@@ -34,8 +34,7 @@ test_that("regression test - range fit", {
     list(loc = loc, scale = scale, shape = shape)
   }
 
-  tmp <- fgev.flex_range(testData[, 2, with = FALSE],
-                         testData[, 3, with = FALSE],
+  tmp <- fgev.flex_range(testData[, c(2, 3), with = FALSE],
                          start = start, fpar = fpar)
 
   expect_equal_to_reference(tmp, file = "./referenceOutput/rangeFit.rds")

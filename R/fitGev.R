@@ -25,7 +25,11 @@ FitGevFlex <- function(data, start, fpar, xpar, std.err = TRUE, ...) {
   call <- match.call()
   opt <- optim(start, nll.gev, hessian = std.err, ...)
   gev <- fpar(opt$par, xpar)
-  out <- list(estimate = opt$par, std.err = rep(NA, length(opt$par)), cov = NULL, deviance = 2 * opt$value, convergence = opt$convergence, counts = opt$counts, message = opt$message, loc = gev$loc, scale = gev$scale, shape = gev$shape)
+  out <- list(estimate = opt$par, std.err = rep(NA, length(opt$par)),
+              cov = NULL, deviance = 2 * opt$value,
+              convergence = opt$convergence, counts = opt$counts,
+              message = opt$message,
+              loc = gev$loc, scale = gev$scale, shape = gev$shape)
   cmat <- try(solve(opt$hessian), TRUE)
   if(!inherits(cmat, "try-error")) {
     out$std.err <- sqrt(diag(cmat))
@@ -35,7 +39,7 @@ FitGevFlex <- function(data, start, fpar, xpar, std.err = TRUE, ...) {
 }
 
 
-fgev.flex_range <- function(data1, data2, start, fpar, xpar, std.err = TRUE, ...) {
+fgev.flex_range <- function(data, start, fpar, xpar, std.err = TRUE, ...) {
   nll.gev <- function(par) {
     pmat <- fpar(par, xpar)
     loc <- pmat$loc
@@ -50,8 +54,8 @@ fgev.flex_range <- function(data1, data2, start, fpar, xpar, std.err = TRUE, ...
     #   nll[gumbel] <- y[gumbel] + exp(-y[gumbel])
     #   sum(nll + log(scale), na.rm = TRUE)
 
-    y1 <- (data1 - loc) / scale
-    y2 <- (data2 - loc) / scale
+    y1 <- (data[ , 1] - loc) / scale
+    y2 <- (data[ , 2] - loc) / scale
 
     #nll for data2 == data1:
     y1eq <- y1[y1 == y2]
