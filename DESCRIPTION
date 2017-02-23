@@ -1,0 +1,15 @@
+Package: gevflex
+Title: Flexible GEV estimation
+Version: 0.0.0.9000
+Date: 2017-02-23
+Authors@R: as.person(c(
+    "Chris Ferro [aut]",
+    "Martin Roth <roth@knmi.nl> [aut, cre]",
+    "Jules Beersma <jules.beersma@knmi.nl> [aut]"
+  ))
+Description: What the package does (one paragraph).
+Depends: R (>= 3.3.2)
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.0
