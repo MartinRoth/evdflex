@@ -40,3 +40,20 @@ test_that("regression test - range fit", {
 
   expect_equal_to_reference(tmp, file = "./referenceOutput/rangeFit.rds")
 })
+
+# test_that("regression test - one dimensional optim", {
+#
+#   start <- 7.5
+#
+#   fpar <- function(p, xpar) {
+#     loc   <- p[1]
+#     scale <- 2.5286
+#     shape <- 0.0934
+#     list(loc = loc, scale = scale, shape = shape)
+#   }
+#
+#   tmp <- fgev.flex_Brent(testData[, 2, with = FALSE], start = start,
+#                          fpar = fpar)
+#
+#   expect_equal_to_reference(tmp, file = "./referenceOutput/oneDimFit.rds")
+# })
