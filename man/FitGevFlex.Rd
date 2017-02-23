@@ -6,6 +6,19 @@
 \usage{
 FitGevFlex(data, start, fpar, xpar, std.err = TRUE, ...)
 }
+\arguments{
+\item{data}{the data}
+
+\item{start}{the start values}
+
+\item{fpar}{the parameter model}
+
+\item{xpar}{the covariates used in fpar}
+
+\item{std.err}{should standard errors be returned}
+
+\item{...}{additional parameters passed to the optimization}
+}
 \description{
 Fit flexible GEV
 }

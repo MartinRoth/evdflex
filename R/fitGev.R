@@ -1,4 +1,11 @@
 #' Fit flexible GEV
+#'
+#' @param data the data
+#' @param start the start values
+#' @param fpar the parameter model
+#' @param xpar the covariates used in fpar
+#' @param std.err should standard errors be returned
+#' @param ... additional parameters passed to the optimization
 #' @export
 FitGevFlex <- function(data, start, fpar, xpar, std.err = TRUE, ...) {
   nll.gev <- function(par) {
