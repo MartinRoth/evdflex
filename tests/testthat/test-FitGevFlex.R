@@ -46,10 +46,10 @@ test_that("regression test - range fit", {
     list(loc = loc, scale = scale, shape = shape)
   }
 
-  expect_error(FitGevFlex(testData[, c(2, 3), with = FALSE], start = start,
+  tmp2 <- FitGevFlex(testData[, c(2, 3), with = FALSE], start = start,
                      fpar = fpar2, xpar=list(N = nrow(testData)),
-                     likelihood = "range"))
-  # expect_equal(tmp2$estimate, tmp$estimate)
+                     likelihood = "range")
+  expect_equal(tmp2$estimate, tmp$estimate)
 })
 
 # test_that("regression test - one dimensional optim", {
