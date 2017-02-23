@@ -1,6 +1,6 @@
 Package: gevflex
 Title: Flexible GEV estimation
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Date: 2017-02-23
 Authors@R: as.person(c(
     "Chris Ferro [aut]",
@@ -15,4 +15,7 @@ Imports:
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.0
-Suggests: covr
+Suggests: 
+    covr,
+    testthat,
+    data.table
