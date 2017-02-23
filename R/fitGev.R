@@ -39,6 +39,8 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
       scale <- pmat$scale
       shape <- pmat$shape
 
+      AssertCorrectParameterCount(pmat, data)
+
       if(any(scale <= 0)) return(1e+20)
 
       gumbel <- (abs(shape) < 1e-06)
@@ -90,7 +92,16 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
   structure(c(out, call = call), class = "evd")
 }
 
-
+AssertCorrectParameterCount <- function(pmat, data) {
+  count <- list()
+  count$data  <- nrow(data)
+  count$loc   <- length(pmat$loc)
+  count$scale <- length(pmat$scale)
+  count$shape <- length(pmat$shape)
+  stopifnot(count$loc == 1)
+  stopifnot(count$loc == 1)
+  stopifnot(count$loc == 1)
+}
 
 
 ####################
