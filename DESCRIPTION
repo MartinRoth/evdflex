@@ -1,7 +1,7 @@
 Package: gevflex
 Title: Flexible GEV estimation
-Version: 0.0.0.9004
-Date: 2017-02-23
+Version: 0.0.0.9005
+Date: 2017-02-24
 Authors@R: as.person(c(
     "Chris Ferro [aut]",
     "Martin Roth <roth@knmi.nl> [aut, cre]",
@@ -11,7 +11,8 @@ Description: What the package does (one paragraph).
 License: file LICENSE
 Depends: R (>= 3.3.2)
 Imports:
-  stats
+  stats,
+  futile.logger
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.0

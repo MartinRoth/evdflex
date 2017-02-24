@@ -3,6 +3,10 @@ context("FitGevFlex")
 ## TODO: Rename context
 ## TODO: Add more tests
 
+library(futile.logger)
+flog.threshold(DEBUG)
+flog.appender(appender.file('gevflex.log'))
+
 library(data.table)
 
 testData <- fread("./testData.txt")
@@ -39,6 +43,8 @@ test_that("regression test - range fit", {
 
   expect_equal_to_reference(tmp, file = "./referenceOutput/rangeFit.rds")
 
+  xpar <- list(N = nrow(testData))
+
   fpar2 <- function(p, xpar) {
     loc   <- rep(p[1], xpar$N)
     scale <- rep(p[2], xpar$N)
@@ -47,7 +53,7 @@ test_that("regression test - range fit", {
   }
 
   tmp2 <- FitGevFlex(testData[, c(2, 3), with = FALSE], start = start,
-                     fpar = fpar2, xpar=list(N = nrow(testData)),
+                     fpar = fpar2, xpar=xpar,
                      likelihood = "range")
   expect_equal(tmp2$estimate, tmp$estimate)
 })

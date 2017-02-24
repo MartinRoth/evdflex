@@ -12,7 +12,11 @@
 FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
                        std.err = TRUE, ...) {
 
+  flog.debug("Running FitGevFlex")
+  flog.debug("Version={%s}", paste0(packageVersion("gevflex")))
+
   if (likelihood == "standard") {
+    flog.debug("Entering standard routine")
     nll.gev <- function(par) {
       pmat  <- fpar(par, xpar)
       loc   <- pmat$loc
@@ -33,13 +37,14 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
       sum(nll + log(scale), na.rm = TRUE)
     }
   } else if (likelihood == "range") {
+    flog.debug("Entering range routine")
+    countData <- nrow(data)
     nll.gev <- function(par) {
-      pmat  <- fpar(par, xpar)
+
+      pmat  <- AssertCorrectParameters(par, fpar, xpar, countData)
       loc   <- pmat$loc
       scale <- pmat$scale
       shape <- pmat$shape
-
-      AssertCorrectParameterCount(pmat, data)
 
       if(any(scale <= 0)) return(1e+20)
 
@@ -48,29 +53,31 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
       y1 <- (data[ , 1] - loc) / scale
       y2 <- (data[ , 2] - loc) / scale
 
+      nll <- numeric(countData)
+
       #nll for data2 == data1:
-      # isRange <- y1 != y2
-      y1eq <- y1[y1 == y2]
-      z1eq <- 1 + shape * y1eq
-      if(any(z1eq <= 0, na.rm = TRUE)) return(1e+20)
-      nlleq         <- log(scale) + (1 + 1 / shape) * log(z1eq) + z1eq^(-1 / shape)
-      nlleq[gumbel] <- log(scale) + y1eq[gumbel] + exp(-y1eq[gumbel])
+      isSame <- y1 == y2
+
+      z1 <- 1 + shape * y1
+      z2 <- 1 + shape * y2
+      if(any(z1 <= 0, na.rm = TRUE)) return(1e+20)
+      if(any(z2 <= 0, na.rm = TRUE)) return(1e+20)
+
+      nll[isSame]          <- log(scale[isSame]) +
+        (1 + 1 / shape[isSame]) * log(z1[isSame]) +
+        z1[isSame]^(-1 / shape[isSame])
+      nll[isSame & gumbel] <- log(scale[isSame & gumbel]) +
+        y1[isSame & gumbel] + exp(-y1[isSame & gumbel])
 
       #nll for data2 <> data1:
-      y1ne <- y1[y1 != y2]
-      y2ne <- y2[y1 != y2]
-      z1ne <- 1 + shape * y1ne
-      z2ne <- 1 + shape * y2ne
-      if(any(z1ne <= 0, na.rm = TRUE)) return(1e+20)
-      if(any(z2ne <= 0, na.rm = TRUE)) return(1e+20)
-      F1 <- exp(-(z1ne)^(-1/shape))
-      F2 <- exp(-(z2ne)^(-1/shape))
-      F1[gumbel] <- exp(-exp(-y1ne))
-      F2[gumbel] <- exp(-exp(-y2ne))
-      nllne         <- -log(F2 - F1)
-      nllne[gumbel] <- -log(F2[gumbel] - F1[gumbel])
+      F1 <- exp(-(z1[!isSame])^(-1/shape[!isSame]))
+      F2 <- exp(-(z2[!isSame])^(-1/shape[!isSame]))
+      F1[gumbel[!isSame]] <- exp(-exp(-y1[!isSame]))
+      F2[gumbel[!isSame]] <- exp(-exp(-y2[!isSame]))
+      nll[!isSame]          <- -log(F2 - F1)
+      nll[!isSame & gumbel] <- -log(F2[gumbel[!isSame]] - F1[gumbel[!isSame]])
 
-      nll <- c(nlleq, nllne)
+      # nll <- c(nlleq, nllne)
       sum(nll, na.rm = TRUE)
     }
   } else {
@@ -89,18 +96,19 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
     out$std.err <- sqrt(diag(cmat))
     out$cov <- cmat
   }
+  flog.debug("FitGevFlex run successfully!")
   structure(c(out, call = call), class = "evd")
 }
 
-AssertCorrectParameterCount <- function(pmat, data) {
-  count <- list()
-  count$data  <- nrow(data)
-  count$loc   <- length(pmat$loc)
-  count$scale <- length(pmat$scale)
-  count$shape <- length(pmat$shape)
-  stopifnot(count$loc == 1)
-  stopifnot(count$loc == 1)
-  stopifnot(count$loc == 1)
+AssertCorrectParameters <- function(par, fpar, xpar, N) {
+  pmat  <- fpar(par, xpar)
+  if (length(pmat$loc)   == 1) pmat$loc   <- rep(pmat$loc, N)
+  else if (length(pmat$loc) != N)   stop("Loc should have length 1 or N")
+  if (length(pmat$scale) == 1) pmat$scale <- rep(pmat$scale, N)
+  else if (length(pmat$scale) != N) stop("Scale should have length 1 or N")
+  if (length(pmat$shape) == 1) pmat$shape <- rep(pmat$shape, N)
+  else if (length(pmat$shape) != N) stop("Shape should have length 1 or N")
+  pmat
 }
 
 
