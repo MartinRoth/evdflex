@@ -1,0 +1,73 @@
+---
+title: "Flexible GEV estimation"
+author: "Martin Roth"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r LoadLibraries, include=FALSE}
+library(data.table)
+library(ggplot2)
+library(gevflex)
+library(evd)
+```
+
+The following example data will help to demonstrate the usage of this package.
+
+```{r LoadData, echo=FALSE}
+data <- fread("../tests/testthat/testData.txt")
+data <- data[, 1 : 4, with = FALSE]
+setnames(data, c("Station", "m10", "m20", "Date"))
+setcolorder(data, c("Date", "Station", "m10", "m20"))
+invisible(data[, Date := as.Date(paste0(Date), "%Y%m%d")])
+setkey(data, Date, Station)
+```
+
+
+```{r ShowData, echo=FALSE}
+knitr::kable(head(data))
+knitr::kable(tail(data))
+```
+
+### Simple parameter model
+
+```{r ParameterModel}
+fpar <- function(p, xpar) {
+    loc   <- p[1]
+    scale <- p[2]
+    shape <- p[3]
+    list(loc = loc, scale = scale, shape = shape)
+  }
+```
+
+Fit for fixed 10 min data and for arbitrary 10 min data using the range
+likelihood. 
+```{r GevFits}
+fitSimple <- FitGevFlex(data[, m10], start = c(7, 2.5, 0.05), fpar = fpar)
+fitRange  <- FitGevFlex(data[, .(m10, m20)], start = c(7, 2.5, 0.05),
+                        fpar = fpar, likelihood = "range")
+
+```
+
+```{r PlotFits, fig.width = 6, fig.cap="Plot of 10 min data (dots) and corresponding 20 min data (triangles) on a Gumbel scale. The standard fit is given in red and the range fit in blue.", echo=FALSE}
+setkey(data, m10)
+invisible(data[, x := qgev((1:.N)/(.N+1))])
+invisible(data[, fitSimple := qgev((1:.N)/(.N+1),
+                                   loc   = fitSimple$estimate[1],
+                                   scale = fitSimple$estimate[2],
+                                   shape = fitSimple$estimate[3]
+                                   )])
+invisible(data[, fitRange := qgev((1:.N)/(.N+1),
+                                   loc   = fitRange$estimate[1],
+                                   scale = fitRange$estimate[2],
+                                   shape = fitRange$estimate[3]
+                                   )])
+ggplot(data, aes(y = m10, x = x)) + geom_point() +
+  geom_point(aes(y = m20), shape = 2) + 
+  geom_line(aes(y = fitSimple), lty = 2, col = 2) +
+  geom_line(aes(y = fitRange), lty = 2, col = 4)
+```
