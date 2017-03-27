@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
   fig.path = "README-"
 )
 ```
-# Flexible gev estimation
+# Flexible evd estimation
 
 [![Project Status: WIP - Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
 [![Travis-CI Build Status](https://travis-ci.org/MartinRoth/gevflex.svg?branch=master)](https://travis-ci.org/MartinRoth/gevflex)
@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 To install the package use:
 ```{r, eval = FALSE}
 library(devtools)
-install_github("MartinRoth/gevflex")
+install_github("MartinRoth/evdflex")
 ```
 or
 ```{r, eval = FALSE}
-devtools::install_github("MartinRoth/gevflex")
+devtools::install_github("MartinRoth/evdflex")
 ```
