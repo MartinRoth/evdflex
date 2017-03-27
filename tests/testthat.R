@@ -1,4 +1,4 @@
 library(testthat)
-library(gevflex)
+library(evdflex)
 
 test_check("evdflex")
