@@ -48,8 +48,8 @@ Fit for fixed 10 min data and for arbitrary 10 min data using the range
 likelihood. 
 ```{r GevFits}
 fitSimple <- FitGevFlex(data[, m10], start = c(7, 2.5, 0.05), fpar = fpar)
-fitRange  <- FitGevFlex(data[, .(m10, m20)], start = c(7, 2.5, 0.05),
-                        fpar = fpar, likelihood = "range")
+fitGrouped  <- FitGevFlex(data[, .(m10, m20)], start = c(7, 2.5, 0.05),
+                        fpar = fpar, likelihood = "grouped")
 
 ```
 
@@ -61,13 +61,13 @@ invisible(data[, fitSimple := qgev((1:.N)/(.N+1),
                                    scale = fitSimple$estimate[2],
                                    shape = fitSimple$estimate[3]
                                    )])
-invisible(data[, fitRange := qgev((1:.N)/(.N+1),
-                                   loc   = fitRange$estimate[1],
-                                   scale = fitRange$estimate[2],
-                                   shape = fitRange$estimate[3]
+invisible(data[, fitGrouped := qgev((1:.N)/(.N+1),
+                                   loc   = fitGrouped$estimate[1],
+                                   scale = fitGrouped$estimate[2],
+                                   shape = fitGrouped$estimate[3]
                                    )])
 ggplot(data, aes(y = m10, x = x)) + geom_point() +
   geom_point(aes(y = m20), shape = 2) + 
   geom_line(aes(y = fitSimple), lty = 2, col = 2) +
-  geom_line(aes(y = fitRange), lty = 2, col = 4)
+  geom_line(aes(y = fitGrouped), lty = 2, col = 4)
 ```
