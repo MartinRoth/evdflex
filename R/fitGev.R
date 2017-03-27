@@ -13,7 +13,7 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
                        std.err = TRUE, ...) {
 
   flog.debug("Running FitGevFlex")
-  flog.debug("Version={%s}", paste0(packageVersion("gevflex")))
+  flog.debug("Version={%s}", paste0(packageVersion("evdflex")))
 
   if (likelihood == "standard") {
     flog.debug("Entering standard routine")
