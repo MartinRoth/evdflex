@@ -7,7 +7,7 @@
 #' @param xpar the covariates used in fpar
 #' @param std.err should standard errors be returned
 #' @param ... additional parameters passed to the optimization
-#' @param likelihood either standard or range
+#' @param likelihood either standard or grouped
 #' @export
 FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
                        std.err = TRUE, ...) {
@@ -36,8 +36,8 @@ FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",
       nll[gumbel] <- y[gumbel] + exp(-y[gumbel])
       sum(nll + log(scale), na.rm = TRUE)
     }
-  } else if (likelihood == "range") {
-    flog.debug("Entering range routine")
+  } else if (likelihood == "grouped") {
+    flog.debug("Entering grouped routine")
     countData <- nrow(data)
     nll.gev <- function(par) {
 

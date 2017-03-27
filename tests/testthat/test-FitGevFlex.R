@@ -27,7 +27,7 @@ test_that("regression test - normal fit", {
   expect_equal_to_reference(tmp, file = "./referenceOutput/normalFit.rds")
 })
 
-test_that("regression test - range fit", {
+test_that("regression test - grouped fit", {
 
   start <- c(7.5, 2.3, 0)
 
@@ -39,9 +39,9 @@ test_that("regression test - range fit", {
   }
 
   tmp <- FitGevFlex(testData[, c(2, 3), with = FALSE], start = start,
-                    fpar = fpar, likelihood = "range")
+                    fpar = fpar, likelihood = "grouped")
 
-  expect_equal_to_reference(tmp, file = "./referenceOutput/rangeFit.rds")
+  expect_equal_to_reference(tmp, file = "./referenceOutput/groupedFit.rds")
 
   xpar <- list(N = nrow(testData))
 
@@ -54,7 +54,7 @@ test_that("regression test - range fit", {
 
   tmp2 <- FitGevFlex(testData[, c(2, 3), with = FALSE], start = start,
                      fpar = fpar2, xpar=xpar,
-                     likelihood = "range")
+                     likelihood = "grouped")
   expect_equal(tmp2$estimate, tmp$estimate)
 })
 
