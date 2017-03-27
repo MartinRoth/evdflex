@@ -12,7 +12,7 @@ vignette: >
 ```{r LoadLibraries, include=FALSE}
 library(data.table)
 library(ggplot2)
-library(gevflex)
+library(evdflex)
 library(evd)
 ```
 

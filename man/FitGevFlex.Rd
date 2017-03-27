@@ -17,7 +17,7 @@ matrix or data.frame with two columns)}
 
 \item{xpar}{the covariates used in fpar}
 
-\item{likelihood}{either standard or range}
+\item{likelihood}{either standard or grouped}
 
 \item{std.err}{should standard errors be returned}
 
