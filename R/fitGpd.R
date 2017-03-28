@@ -3,13 +3,13 @@
 #' @param data The data which should be modeled
 #' @param xpar The covariates used in
 #' @param fpar the model
-#' @param numberOfParameters Should be omitted
+#' @param method The optimization method to be used
 #' @param start Vector of length numberOfParamaters
 #' @param interval Interval if only one parameter
 #' @param ... Further arguments passed to optim (or optimize)
 #' @return The fitted parameters
 #' @export
-FitGpdFlex <-function (data, xpar, fpar, numberOfParameters, ...
+FitGpdFlex <-function (data, xpar, fpar, method = "Nelder-Mead", ...
                        ,start    = NULL
                        ,interval = NULL) {
   
@@ -18,8 +18,8 @@ FitGpdFlex <-function (data, xpar, fpar, numberOfParameters, ...
   
   ## numberOfParameters should be replaced by method "Brent" in newer versions
   ## (problem is optim) remove then also check on interval and start
-  if (numberOfParameters == 1) stopifnot(!is.null(interval))
-  if (numberOfParameters >  1) stopifnot(!is.null(start))
+  if (method == "Brent") stopifnot(!is.null(interval))
+  else stopifnot(!is.null(start))
   
   nllGpd <- function(par) {
     pmat <- fpar(par, xpar)
@@ -35,14 +35,14 @@ FitGpdFlex <-function (data, xpar, fpar, numberOfParameters, ...
     sum(nll + log(scale), na.rm = TRUE)
   }
   call <- match.call()
-  if(numberOfParameters == 1) {
+  if(method == "Brent") {
     opt <- optimize(nllGpd, interval,...)
     gpd <- fpar(opt$minimum, xpar)
     out <- list(estimate = opt$minimum, scale = gpd$scale
                 ,shape = gpd$shape, deviance = 2 * opt$objective)
   }
-  else if (numberOfParameters > 1) {
-    opt <- optim(start, nllGpd, ...)
+  else {
+    opt <- optim(start, nllGpd, method = method, ...)
     gpd <- fpar(opt$par, xpar)
     out <- list(estimate = opt$par, std.err = rep(NA, length(opt$par))
                 ,cov = NULL, deviance = 2 * opt$value
