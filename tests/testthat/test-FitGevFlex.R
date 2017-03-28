@@ -25,6 +25,20 @@ test_that("regression test - normal fit", {
   tmp <- FitGevFlex(testData[, 2, with = FALSE], start = start, fpar = fpar)
 
   expect_equal_to_reference(tmp, file = "./referenceOutput/normalFit.rds")
+  
+  start <- c(7.5)
+  
+  fpar <- function(p, xpar) {
+    loc   <- p[1]
+    scale <- 2.5
+    shape <- 0.1
+    list(loc = loc, scale = scale, shape = shape)
+  }
+  
+  tmp <- FitGevFlex(testData[, 2, with = FALSE], start = start, fpar = fpar,
+                    method = "Brent", lower = 0.1, upper = 10)
+  
+  expect_equal_to_reference(tmp, file = "./referenceOutput/fixedFit.rds")
 })
 
 test_that("regression test - grouped fit", {
