@@ -9,17 +9,13 @@
 #' @param ... Further arguments passed to optim (or optimize)
 #' @return The fitted parameters
 #' @export
-FitGpdFlex <-function (data, xpar, fpar, method = "Nelder-Mead", ...
-                       ,start    = NULL
+FitGpdFlex <-function (data, xpar, fpar, start, method = "Nelder-Mead", ...
                        ,interval = NULL) {
   
   flog.debug("Running FitGpdFlex")
   flog.debug("Version={%s}", paste0(packageVersion("evdflex")))
   
-  ## numberOfParameters should be replaced by method "Brent" in newer versions
-  ## (problem is optim) remove then also check on interval and start
   if (method == "Brent") stopifnot(!is.null(interval))
-  else stopifnot(!is.null(start))
   
   nllGpd <- function(par) {
     pmat <- fpar(par, xpar)
@@ -36,10 +32,10 @@ FitGpdFlex <-function (data, xpar, fpar, method = "Nelder-Mead", ...
   }
   call <- match.call()
   if(method == "Brent") {
-    opt <- optimize(nllGpd, interval,...)
-    gpd <- fpar(opt$minimum, xpar)
-    out <- list(estimate = opt$minimum, scale = gpd$scale
-                ,shape = gpd$shape, deviance = 2 * opt$objective)
+    opt <- optim(start, nllGpd, lower = min(interval), upper = max(interval), method = "Brent")
+    gpd <- fpar(opt$par, xpar)
+    out <- list(estimate = opt$par, scale = gpd$scale
+                ,shape = gpd$shape, deviance = 2 * opt$value)
   }
   else {
     opt <- optim(start, nllGpd, method = method, ...)

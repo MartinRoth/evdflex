@@ -48,6 +48,7 @@ test_that("regression test (gpd) - normal fit", {
   tmp <- FitGpdFlex(data = testData$V2,
                     xpar = xpar,
                     fpar = fpar,
+                    start = start,
                     method = "Brent",
                     interval = c(0.1, 15)
   )
