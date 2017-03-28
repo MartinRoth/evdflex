@@ -57,17 +57,76 @@ test_that("regression test (gpd) - normal fit", {
   
 })
 
-# test_that("regression test - grouped fit", {
-# 
-#   start <- c(7.5, 2.3, 0)
-# 
-#   fpar <- function(p, xpar) {
-#     loc   <- p[1]
-#     scale <- p[2]
-#     shape <- p[3]
-#     list(loc = loc, scale = scale, shape = shape)
-#   }
-# 
+test_that("duplicates only", {
+  start <- c(2.3, 0)
+  
+  xpar <- list(N = nrow(testData))
+  
+  fpar <- function(p, xpar) {
+    loc   <- 10
+    scale <- p[1]
+    shape <- p[2]
+    list(loc = loc, scale = scale, shape = shape)
+  }
+  
+  tmp1 <- FitGpdFlex(data = testData$V2,
+                     xpar = xpar,
+                     fpar = fpar,
+                     start = start
+  )
+  tmp1$call <- NULL
+  
+  tmp2 <- FitGpdFlex(data = data.frame(testData$V2, testData$V2),
+                    xpar = xpar,
+                    fpar = fpar,
+                    start = start,
+                    likelihood = "grouped")
+  tmp2$call <- NULL
+  
+  expect_equal(tmp1, tmp2)
+  
+})
+
+test_that("regression test - grouped fit", {
+
+  start <- c(2.3, 0)
+  
+  xpar <- list(N = nrow(testData))
+  
+  fpar <- function(p, xpar) {
+    loc   <- 10
+    scale <- p[1]
+    shape <- p[2]
+    list(loc = loc, scale = scale, shape = shape)
+  }
+  
+  tmp <- FitGpdFlex(data = testData,
+                    xpar = xpar,
+                    fpar = fpar,
+                    start = start,
+                    likelihood = "grouped")
+  
+  start <- c(2.3)
+  
+  xpar <- list(N = 1)
+  
+  fpar <- function(p, xpar) {
+    loc   <- 10
+    scale <- p[1]
+    shape <- 0
+    list(loc = loc, scale = scale, shape = shape)
+  }
+  
+  tmp <- FitGpdFlex(data = data.frame(2, 4),
+                    xpar = xpar,
+                    fpar = fpar,
+                    start = start,
+                    likelihood = "grouped",
+                    method = "Brent", lower = 0.1, upper = 10)
+  
+  expect_equal(tmp$scale, 2.88539, tolerance = 1e-6)
+  #expect_equal_to_reference(tmp, file = "./referenceOutput/tinyFitGpd.rds")
+
 #   tmp <- FitGevFlex(testData[, c(2, 3), with = FALSE], start = start,
 #                     fpar = fpar, likelihood = "grouped")
 # 
@@ -86,7 +145,7 @@ test_that("regression test (gpd) - normal fit", {
 #                      fpar = fpar2, xpar=xpar,
 #                      likelihood = "grouped")
 #   expect_equal(tmp2$estimate, tmp$estimate)
-# })
+})
 
 # test_that("regression test - one dimensional optim", {
 #
