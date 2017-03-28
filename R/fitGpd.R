@@ -12,6 +12,10 @@
 FitGpdFlex <-function (data, xpar, fpar, numberOfParameters, ...
                        ,start    = NULL
                        ,interval = NULL) {
+  
+  flog.debug("Running FitGpdFlex")
+  flog.debug("Version={%s}", paste0(packageVersion("evdflex")))
+  
   ## numberOfParameters should be replaced by method "Brent" in newer versions
   ## (problem is optim) remove then also check on interval and start
   if (numberOfParameters == 1) stopifnot(!is.null(interval))
@@ -43,11 +47,11 @@ FitGpdFlex <-function (data, xpar, fpar, numberOfParameters, ...
     out <- list(estimate = opt$par, std.err = rep(NA, length(opt$par))
                 ,cov = NULL, deviance = 2 * opt$value
                 ,convergence = opt$convergence
-                ,counts = opt$counts
+                ,counts  = opt$counts
                 ,message = opt$message
-                ,threshold = gpd$threshold
-                ,scale = gpd$scale
-                ,shape = gpd$shape)
+                ,loc     = gpd$loc
+                ,scale   = gpd$scale
+                ,shape   = gpd$shape)
     cmat <- try(solve(opt$hessian), TRUE)
     if (!inherits(cmat, "try-error")) {
       out$std.err <- sqrt(diag(cmat))

@@ -1,4 +1,4 @@
-context("FitGevFlex")
+context("FitGpdFlex")
 
 library(futile.logger)
 flog.threshold(DEBUG)
@@ -6,22 +6,34 @@ flog.appender(appender.file('gpdflex.log'))
 
 library(data.table)
 
-testData <- fread("./testData.txt")
+testData <- fread("testData.txt")
+
+testData <- as.data.frame(testData[, c(2,3), with = FALSE])
+
+testData <- subset(testData, V2 >= 10)
+testData <- testData - 10
 
 test_that("regression test (gpd) - normal fit", {
 
-  start <- c(7.5, 2.3, 0)
+  start <- c(2.3, 0)
 
+  xpar <- list(N = nrow(testData))
+  
   fpar <- function(p, xpar) {
-    loc   <- p[1]
-    scale <- p[2]
-    shape <- p[3]
+    loc   <- 10
+    scale <- p[1]
+    shape <- p[2]
     list(loc = loc, scale = scale, shape = shape)
   }
 
-  tmp <- FitGpdFlex(testData[, 2, with = FALSE], start = start, fpar = fpar)
+  tmp <- FitGpdFlex(data = testData$V2,
+                    xpar = xpar,
+                    fpar = fpar,
+                    numberOfParameters = 2,
+                    start = start
+                    )
 
-  # expect_equal_to_reference(tmp, file = "./referenceOutput/normalFitGpd.rds")
+  expect_equal_to_reference(tmp, file = "./referenceOutput/normalFitGpd.rds")
 })
 
 # test_that("regression test - grouped fit", {
