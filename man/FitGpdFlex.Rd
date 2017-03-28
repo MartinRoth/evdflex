@@ -4,19 +4,19 @@
 \alias{FitGpdFlex}
 \title{Fits an GPD to data}
 \usage{
-FitGpdFlex(data, xpar, fpar, start, method = "Nelder-Mead", ...)
+FitGpdFlex(data, xpar, fpar, start, likelihood = "standard", ...)
 }
 \arguments{
-\item{data}{The data which should be modeled}
+\item{data}{the data (in case of likelihood = "range" this should be a
+matrix or data.frame with two columns)}
 
-\item{xpar}{The covariates used in}
+\item{xpar}{the covariates used in fpar}
 
-\item{fpar}{the model}
+\item{fpar}{the parameter model}
 
-\item{start}{Vector of length numberOfParamaters}
+\item{start}{the start values}
 
-\item{method}{The optimization method to be used (In case of a univariate
-optimization, the *lower* and *upper* boundaries have to be specified.)}
+\item{likelihood}{either standard or grouped}
 
 \item{...}{Further arguments passed to optim}
 }

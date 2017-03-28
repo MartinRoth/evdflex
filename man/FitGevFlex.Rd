@@ -21,7 +21,7 @@ matrix or data.frame with two columns)}
 
 \item{std.err}{should standard errors be returned}
 
-\item{...}{additional parameters passed to the optimization}
+\item{...}{Further arguments passed to optim}
 }
 \description{
 Fit flexible GEV

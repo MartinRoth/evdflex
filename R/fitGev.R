@@ -6,7 +6,7 @@
 #' @param fpar the parameter model
 #' @param xpar the covariates used in fpar
 #' @param std.err should standard errors be returned
-#' @param ... additional parameters passed to the optimization
+#' @param ... Further arguments passed to optim
 #' @param likelihood either standard or grouped
 #' @export
 FitGevFlex <- function(data, start, fpar, xpar, likelihood = "standard",

@@ -1,34 +1,31 @@
 #' Fits an GPD to data
 #'
-#' @param data The data which should be modeled
-#' @param xpar The covariates used in
-#' @param fpar the model
-#' @param method The optimization method to be used (In case of a univariate
-#'   optimization, the *lower* and *upper* boundaries have to be specified.)
-#' @param start Vector of length numberOfParamaters
-#' @param ... Further arguments passed to optim
+#' @inheritParams FitGevFlex
 #' @return The fitted parameters
 #' @export
-FitGpdFlex <-function (data, xpar, fpar, start, method = "Nelder-Mead", ...) {
+FitGpdFlex <-function (data, xpar, fpar, start, likelihood = "standard", ...) {
   
   flog.debug("Running FitGpdFlex")
   flog.debug("Version={%s}", paste0(packageVersion("evdflex")))
   
-  nllGpd <- function(par) {
-    pmat <- fpar(par, xpar)
-    scale <- pmat$scale
-    shape <- pmat$shape
-    if (any(scale <= 0)) return(1e+20)
-    exponential <- (abs(shape) < 1e-06)
-    y <- data/scale
-    z <- 1 + shape * y
-    if (any(z <= 0, na.rm = TRUE)) return(1e+20)
-    nll <- (shape + 1)/shape * log(z)
-    nll[exponential] <- y[exponential]
-    sum(nll + log(scale), na.rm = TRUE)
+  if (likelihood == "standard") {
+    flog.debug("Entering standard routine")
+    nllGpd <- function(par) {
+      pmat <- fpar(par, xpar)
+      scale <- pmat$scale
+      shape <- pmat$shape
+      if (any(scale <= 0)) return(1e+20)
+      exponential <- (abs(shape) < 1e-06)
+      y <- data/scale
+      z <- 1 + shape * y
+      if (any(z <= 0, na.rm = TRUE)) return(1e+20)
+      nll <- (shape + 1)/shape * log(z)
+      nll[exponential] <- y[exponential]
+      sum(nll + log(scale), na.rm = TRUE)
+    }
   }
   call <- match.call()
-  opt <- optim(start, nllGpd, method = method, ...)
+  opt <- optim(start, nllGpd, ...)
   gpd <- fpar(opt$par, xpar)
   out <- list(estimate = opt$par, std.err = rep(NA, length(opt$par))
               ,cov = NULL, deviance = 2 * opt$value
