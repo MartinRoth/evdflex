@@ -50,8 +50,8 @@ test_that("regression test (gpd) - normal fit", {
                     fpar = fpar,
                     start = start,
                     method = "Brent",
-                    interval = c(0.1, 15)
-  )
+                    lower = 0.1,
+                    upper = 15)
   
   expect_equal_to_reference(tmp, file = "./referenceOutput/normalFitExponential.rds")
   

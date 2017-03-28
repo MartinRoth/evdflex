@@ -3,19 +3,16 @@
 #' @param data The data which should be modeled
 #' @param xpar The covariates used in
 #' @param fpar the model
-#' @param method The optimization method to be used
+#' @param method The optimization method to be used (In case of a univariate
+#'   optimization, the *lower* and *upper* boundaries have to be specified.)
 #' @param start Vector of length numberOfParamaters
-#' @param interval Interval if only one parameter
-#' @param ... Further arguments passed to optim (or optimize)
+#' @param ... Further arguments passed to optim
 #' @return The fitted parameters
 #' @export
-FitGpdFlex <-function (data, xpar, fpar, start, method = "Nelder-Mead", ...
-                       ,interval = NULL) {
+FitGpdFlex <-function (data, xpar, fpar, start, method = "Nelder-Mead", ...) {
   
   flog.debug("Running FitGpdFlex")
   flog.debug("Version={%s}", paste0(packageVersion("evdflex")))
-  
-  if (method == "Brent") stopifnot(!is.null(interval))
   
   nllGpd <- function(par) {
     pmat <- fpar(par, xpar)
@@ -31,28 +28,21 @@ FitGpdFlex <-function (data, xpar, fpar, start, method = "Nelder-Mead", ...
     sum(nll + log(scale), na.rm = TRUE)
   }
   call <- match.call()
-  if(method == "Brent") {
-    opt <- optim(start, nllGpd, lower = min(interval), upper = max(interval), method = "Brent")
-    gpd <- fpar(opt$par, xpar)
-    out <- list(estimate = opt$par, scale = gpd$scale
-                ,shape = gpd$shape, deviance = 2 * opt$value)
+  opt <- optim(start, nllGpd, method = method, ...)
+  gpd <- fpar(opt$par, xpar)
+  out <- list(estimate = opt$par, std.err = rep(NA, length(opt$par))
+              ,cov = NULL, deviance = 2 * opt$value
+              ,convergence = opt$convergence
+              ,counts  = opt$counts
+              ,message = opt$message
+              ,loc     = gpd$loc
+              ,scale   = gpd$scale
+              ,shape   = gpd$shape)
+  cmat <- try(solve(opt$hessian), TRUE)
+  if (!inherits(cmat, "try-error")) {
+    out$std.err <- sqrt(diag(cmat))
+    out$cov <- cmat
   }
-  else {
-    opt <- optim(start, nllGpd, method = method, ...)
-    gpd <- fpar(opt$par, xpar)
-    out <- list(estimate = opt$par, std.err = rep(NA, length(opt$par))
-                ,cov = NULL, deviance = 2 * opt$value
-                ,convergence = opt$convergence
-                ,counts  = opt$counts
-                ,message = opt$message
-                ,loc     = gpd$loc
-                ,scale   = gpd$scale
-                ,shape   = gpd$shape)
-    cmat <- try(solve(opt$hessian), TRUE)
-    if (!inherits(cmat, "try-error")) {
-      out$std.err <- sqrt(diag(cmat))
-      out$cov <- cmat
-    }
-  }
+  
   structure(c(out, call = call), class = "gpd")
 }

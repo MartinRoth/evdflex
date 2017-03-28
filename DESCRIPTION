@@ -1,7 +1,7 @@
 Package: evdflex
 Title: Flexible GEV estimation
-Version: 0.0.0.9006
-Date: 2017-02-24
+Version: 0.0.0.9007
+Date: 2017-03-28
 Authors@R: as.person(c(
     "Chris Ferro [aut]",
     "Martin Roth <roth@knmi.nl> [aut, cre]",

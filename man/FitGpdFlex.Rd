@@ -4,8 +4,7 @@
 \alias{FitGpdFlex}
 \title{Fits an GPD to data}
 \usage{
-FitGpdFlex(data, xpar, fpar, numberOfParameters, ..., start = NULL,
-  interval = NULL)
+FitGpdFlex(data, xpar, fpar, start, method = "Nelder-Mead", ...)
 }
 \arguments{
 \item{data}{The data which should be modeled}
@@ -14,13 +13,12 @@ FitGpdFlex(data, xpar, fpar, numberOfParameters, ..., start = NULL,
 
 \item{fpar}{the model}
 
-\item{numberOfParameters}{Should be omitted}
-
-\item{...}{Further arguments passed to optim (or optimize)}
-
 \item{start}{Vector of length numberOfParamaters}
 
-\item{interval}{Interval if only one parameter}
+\item{method}{The optimization method to be used (In case of a univariate
+optimization, the *lower* and *upper* boundaries have to be specified.)}
+
+\item{...}{Further arguments passed to optim}
 }
 \value{
 The fitted parameters
