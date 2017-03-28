@@ -34,6 +34,27 @@ test_that("regression test (gpd) - normal fit", {
                     )
 
   expect_equal_to_reference(tmp, file = "./referenceOutput/normalFitGpd.rds")
+  
+  start <- c(2.3)
+  
+  xpar <- list(N = nrow(testData))
+  
+  fpar <- function(p, xpar) {
+    loc   <- 10
+    scale <- p[1]
+    shape <- 0
+    list(loc = loc, scale = scale, shape = shape)
+  }
+  
+  tmp <- FitGpdFlex(data = testData$V2,
+                    xpar = xpar,
+                    fpar = fpar,
+                    numberOfParameters = 1,
+                    interval = c(0.1, 15)
+  )
+  
+  expect_equal_to_reference(tmp, file = "./referenceOutput/normalFitExponential.rds")
+  
 })
 
 # test_that("regression test - grouped fit", {
