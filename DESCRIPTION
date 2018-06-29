@@ -9,7 +9,7 @@ Authors@R: as.person(c(
   ))
 Description: What the package does (one paragraph).
 License: file LICENSE
-Depends: R (>= 3.3.2)
+Depends: R (>= 3.3)
 Imports:
   stats,
   futile.logger
